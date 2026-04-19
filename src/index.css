@@ -1,89 +1,256 @@
 @import "tailwindcss";
 
 @theme {
-  --font-mono: "IBM Plex Mono", monospace;
-  --font-display: "Astloch", cursive;
+  --font-mono: "Share Tech Mono", monospace;
+  --font-display: "VT323", monospace;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Astloch:wght@400;700&display=swap');
+/* ── BASE ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: #050505;
+}
 
 body {
-  @apply bg-[#2a2a2a] text-[#e0e0e0] font-mono selection:bg-[#d1d1d1] selection:text-black min-h-screen overflow-x-hidden;
-  background-color: #2a2a2a;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+  @apply min-h-screen overflow-x-hidden;
+  background-color: #050505;
+  color: #888888;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.825rem;
+  line-height: 1.6;
 }
 
+::selection {
+  background: #b8ff00;
+  color: #050505;
+}
+
+/* ── CRT OVERLAY ───────────────────────────────────── */
 .crt-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   pointer-events: none;
   z-index: 9999;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.01), rgba(255, 255, 255, 0.01));
-  background-size: 100% 4px, 3px 100%;
-  opacity: 0.05;
+  background:
+    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.18) 50%),
+    linear-gradient(90deg, rgba(184,255,0,0.008), rgba(0,0,0,0.008), rgba(184,255,0,0.008));
+  background-size: 100% 3px, 3px 100%;
+  opacity: 0.18;
 }
 
 .scanline {
-  width: 100%;
-  height: 100px;
-  z-index: 9998;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0.02) 10%, rgba(0, 0, 0, 0.02) 100%);
-  opacity: 0.03;
   position: fixed;
   bottom: 100%;
-  animation: scanline 15s linear infinite;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background: linear-gradient(0deg, transparent 0%, rgba(184,255,0,0.012) 50%, transparent 100%);
+  z-index: 9998;
+  pointer-events: none;
+  animation: scanline 14s linear infinite;
 }
 
 @keyframes scanline {
-  0% { bottom: 100%; }
-  100% { bottom: -100px; }
+  0%   { bottom: 100%; }
+  100% { bottom: -70px; }
 }
+
+/* ── GLITCH & FLICKER ──────────────────────────────── */
+@keyframes glitch-clip {
+  0%   { clip-path: polygon(0 2%, 100% 2%, 100% 6%, 0 6%);   transform: translate(-3px, 0) skew(-0.3deg); }
+  6%   { clip-path: polygon(0 55%, 100% 55%, 100% 60%, 0 60%); transform: translate(3px, 0); }
+  12%  { clip-path: polygon(0 32%, 100% 32%, 100% 36%, 0 36%); transform: translate(-2px, 0) skew(0.2deg); }
+  18%  { clip-path: polygon(0 78%, 100% 78%, 100% 100%, 0 100%); transform: translate(2px, 0); }
+  24%, 100% { clip-path: none; transform: translate(0); }
+}
+
+@keyframes flicker {
+  0%, 94%, 100% { opacity: 1; }
+  95% { opacity: 0.5; }
+  96% { opacity: 1; }
+  97% { opacity: 0.15; }
+  98% { opacity: 1; }
+}
+
+@keyframes pulse-acid {
+  0%, 100% { box-shadow: 0 0 4px rgba(184,255,0,0.2); }
+  50%       { box-shadow: 0 0 14px rgba(184,255,0,0.55), 0 0 28px rgba(184,255,0,0.15); }
+}
+
+@keyframes march {
+  0%   { background-position: 0 0; }
+  100% { background-position: 16px 0; }
+}
+
+/* ── COMPONENT CLASSES ─────────────────────────────── */
 
 .bbs-border {
-  border: 2px solid #555555;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border: 1px solid #1a1a1a;
 }
 
+/* button */
 .bbs-button {
-  @apply px-4 py-2 border-2 border-[#d1d1d1] text-[#d1d1d1] uppercase font-bold hover:bg-[#d1d1d1] hover:text-black transition-all active:scale-95 bg-[#3a3a3a];
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.6);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid #252525;
+  background: #080808;
+  color: #555555;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  position: relative;
+  user-select: none;
+}
+
+.bbs-button:hover {
+  border-color: #b8ff00;
+  color: #b8ff00;
+  background: #0a0a0a;
+  box-shadow: 0 0 8px rgba(184,255,0,0.2), inset 0 0 6px rgba(184,255,0,0.04);
+}
+
+.bbs-button:active {
+  transform: scale(0.97);
 }
 
 .bbs-button-active {
-  @apply bg-[#d1d1d1] text-black border-[#d1d1d1];
+  border-color: #b8ff00 !important;
+  color: #050505 !important;
+  background: #b8ff00 !important;
+  box-shadow: 0 0 10px rgba(184,255,0,0.45) !important;
 }
 
+/* card */
 .bbs-card {
-  @apply bg-[#333333] border-2 border-[#555555] p-6 relative overflow-hidden;
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.4);
+  background: #080808;
+  border: 1px solid #181818;
+  padding: 1.1rem;
+  position: relative;
+  overflow: hidden;
 }
 
+.bbs-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(140deg, rgba(184,255,0,0.015) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.bbs-card:hover {
+  border-color: #222222;
+}
+
+/* card section header — acid colored, no background */
 .bbs-header {
-  @apply bg-[#d1d1d1] text-black px-4 py-1 font-display font-bold tracking-widest mb-4 text-lg;
+  display: block;
+  background: transparent;
+  border-bottom: 1px solid #1a1a1a;
+  color: #b8ff00;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0 0 0.4rem 0;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 7px rgba(184,255,0,0.55);
 }
 
+/* input */
 .bbs-input {
-  @apply bg-[#1a1a1a] border-2 border-[#555555] text-[#e0e0e0] p-3 focus:outline-none focus:border-[#d1d1d1] w-full transition-colors;
+  background: #060606;
+  border: 1px solid #1e1e1e;
+  color: #c0c0c0;
+  padding: 0.55rem 0.75rem;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+  caret-color: #b8ff00;
 }
 
+.bbs-input:focus {
+  border-color: #b8ff00;
+  box-shadow: 0 0 8px rgba(184,255,0,0.12), inset 0 0 4px rgba(184,255,0,0.03);
+}
+
+.bbs-input::placeholder {
+  color: #242424;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+select.bbs-input option {
+  background: #0a0a0a;
+  color: #c0c0c0;
+}
+
+/* stamp overlay */
 .stamp-effect {
-  @apply border-4 border-white text-white uppercase font-bold px-4 py-2 rotate-[-12deg] text-3xl tracking-widest absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-  background: rgba(0,0,0,0.85);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-9deg);
+  border: 2px solid #b8ff00;
+  color: #b8ff00;
+  font-family: "VT323", monospace;
+  font-size: 2rem;
+  letter-spacing: 0.35em;
+  padding: 0.2rem 1.1rem;
+  pointer-events: none;
+  z-index: 10;
+  text-shadow: 0 0 14px rgba(184,255,0,0.8);
+  box-shadow: 0 0 14px rgba(184,255,0,0.25), inset 0 0 8px rgba(184,255,0,0.08);
+  background: rgba(0,0,0,0.82);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-[#2a2a2a];
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-[#555555] border-2 border-[#2a2a2a] rounded-full;
+/* ── UTILITIES ─────────────────────────────────────── */
+
+.acid-glow {
+  color: #b8ff00;
+  text-shadow: 0 0 8px rgba(184,255,0,0.65), 0 0 20px rgba(184,255,0,0.2);
 }
 
+.vt {
+  font-family: "VT323", monospace;
+}
 
+.animate-glitch {
+  animation: glitch-clip 7s 2s infinite;
+}
+
+.animate-flicker {
+  animation: flicker 9s 1s infinite;
+}
+
+.animate-pulse-acid {
+  animation: pulse-acid 2.5s ease-in-out infinite;
+}
+
+/* marching dashes on hover for empty state */
+.dashed-march {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #1a1a1a 0px,
+    #1a1a1a 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  background-size: 16px 1px;
+  animation: march 0.6s linear infinite;
+}
+
+/* ── SCROLLBAR ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #060606; }
+::-webkit-scrollbar-thumb { background: #1c1c1c; }
+::-webkit-scrollbar-thumb:hover { background: #b8ff00; }
